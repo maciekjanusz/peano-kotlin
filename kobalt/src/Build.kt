@@ -23,6 +23,6 @@ val proj = project {
     }
 
     application {
-        mainClass = "com.example.MainKt"
+        mainClass = "com.maciekjanusz.App"
     }
 }
