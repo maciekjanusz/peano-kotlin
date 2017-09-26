@@ -9,6 +9,7 @@ sealed class Nat {
     abstract operator fun plus(that: Nat): Nat
     abstract operator fun minus(that: Nat): Nat
     fun negativeError(): Nothing = throw RuntimeException("negative")
+    tailrec abstract fun eval(): Int
 }
 
 object Zero : Nat() {
@@ -16,6 +17,7 @@ object Zero : Nat() {
     override fun predecessor() = negativeError()
     override fun plus(that: Nat) = that
     override fun minus(that: Nat) = if (that.isZero()) Zero else negativeError()
+    override fun eval() = 0
 }
 
 open class Succ(val pre: Nat) : Nat() {
@@ -23,16 +25,12 @@ open class Succ(val pre: Nat) : Nat() {
     override fun predecessor() = pre
     override fun plus(that: Nat) = Succ(pre + that)
     override fun minus(that: Nat) = if (that.isZero()) this else pre - that.predecessor()
+    override fun eval() = 1 + pre.eval()
 }
 
 object One : Succ(Zero)
 class Two : Succ(One)
 class Three : Succ(Two())
-
-fun eval(n: Nat): Int = when (n) {
-    Zero -> 0
-    is Succ -> eval(n.pre) + 1
-}
 
 fun main(args: Array<String>) {
     val thirtyFour =
@@ -55,11 +53,11 @@ fun main(args: Array<String>) {
             (Succ(Succ // 34
             (Zero))))))))))))))))))))))))))))))))))
 
-    println(eval(One)) // 1
-    println(eval(Two())) // 2
-    println(eval(Three())) // 3
-    println(eval(thirtyFour)) // 34
+    println(One.eval()) // 1
+    println(Two().eval()) // 2
+    println(Three().eval()) // 3
+    println(thirtyFour.eval()) // 34
 
     // unary operator
-    println(eval(+Zero)) // 1
+    println(+Zero.eval()) // 1
 }
